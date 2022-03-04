@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 import router from './router'
 
+import './styles/tailwind.css'
+
 library.add(faUserSecret)
 
 const app = createApp(App)

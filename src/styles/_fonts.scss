@@ -1,0 +1,17 @@
+$heading-font-family: 'Nunito', sans-serif;
+$heading-font-weight: 600;
+
+$body-font-family: 'Nunito', sans-serif;
+$body-font-weight: 400;
+
+%font-heading {
+  font-family: $heading-font-family;
+  font-weight: $heading-font-weight;
+  color: $color-heading-text;
+}
+
+%font-body {
+  font-family: $body-font-family;
+  font-weight: $body-font-weight;
+  color: $color-body-text;
+}
