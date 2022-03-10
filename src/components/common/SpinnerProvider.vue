@@ -2,7 +2,7 @@
   <div>
     <div
       v-show="isSpinnerVisible"
-      class="z-40 min-h-screen min-w-screen bg-gray-900 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center"
+      class="spinner z-40 min-h-screen min-w-screen bg-gray-900 bg-opacity-40 fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center"
     >
       <div class="orbit-spinner">
         <div class="orbit"></div>
@@ -34,7 +34,9 @@ export default {
     const isSpinnerVisible = ref(false)
 
     // Methods
-    const setSpinnerOn = () => (isSpinnerVisible.value = true)
+    const setSpinnerOn = () => {
+      isSpinnerVisible.value = true
+    }
     const setSpinnerOff = () => (isSpinnerVisible.value = false)
 
     // Provide the state and methods to change it
@@ -50,15 +52,18 @@ export default {
   }
 }
 </script>
-<style module>
+<style>
+.spinner {
+  background: rgba(255, 255, 255, 0.7) !important;
+}
 .orbit-spinner,
 .orbit-spinner * {
   box-sizing: border-box;
 }
 
 .orbit-spinner {
-  height: 55px;
-  width: 55px;
+  height: 7rem;
+  width: 7rem;
   border-radius: 50%;
   perspective: 800px;
 }
