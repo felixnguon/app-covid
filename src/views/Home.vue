@@ -4,10 +4,17 @@
     <div>
       <Heading heading="h2" elClass="text-xl md:text-3xl text-center font-light">{{ AppEnum.DESCRIPTION }}</Heading>
       <DataTitle :data-date="date" />
-      <Section class="md:flex items-center">
-        <template v-for="(slugs, index) in AppEnum.GLOBAL" :key="index">
-          <DataStatistic :slugs="slugs" :data="stats" />
-        </template>
+      <Section>
+        <Heading
+          heading="h2"
+          class="text-xl md:text-3xl text-center font-semibold leading-tight md:mr-5 mb-2 md:mb-4"
+          >{{ AppEnum.GLOBAL.title }}</Heading
+        >
+        <div class="md:flex items-center">
+          <template v-for="(slugs, index) in AppEnum.GLOBAL.data" :key="index">
+            <DataStatistic :slugs="slugs" :data="stats" />
+          </template>
+        </div>
       </Section>
       <Section>
         <DataTable
@@ -102,9 +109,6 @@ export default {
     }
   },
   methods: {
-    // onSelected({ name, slug }) {
-    //   this.currentState = { name, slug }
-    // },
     onToggleModal() {
       this.modal.isVisible = !this.modal.isVisible
     },
@@ -116,7 +120,7 @@ export default {
       if (countryInfo) {
         this.modal.isVisible = true
       }
-      this.modal.selected = { ...countryInfo }
+      this.modal.selected = { ...countryInfo, ...country }
     }
   }
 }

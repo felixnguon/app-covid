@@ -19,3 +19,7 @@ small,
 button {
   @extend %font-body;
 }
+
+main {
+  background: radial-gradient(50% 50% at 50% 50%, #c9e3f38a 31.25%, rgb(229 208 225 / 37%) 100%);
+}

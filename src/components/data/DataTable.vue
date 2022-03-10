@@ -2,7 +2,7 @@
   <div class="">
     <div class="md:flex items-center">
       <Heading
-        heading="h3"
+        heading="h2"
         class="text-xl md:text-xl text-center md:text-left font-semibold leading-tight md:mr-5 mb-2 md:mb-0"
         >Countries</Heading
       >
@@ -20,12 +20,12 @@
             <tr class="flex w-full">
               <template v-for="(th, index) in headers" :key="index">
                 <th
-                  class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase"
+                  class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold text-gray-700 uppercase"
                 >
                   {{ th }}
                 </th>
               </template>
-              <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"></th>
+              <th class="px-5 py-3 border-b-2 border-gray-200"></th>
             </tr>
           </thead>
           <tbody class="flex flex-col items-center justify-between overflow-y-scroll w-full" style="height: 50vh">
@@ -137,7 +137,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" module>
 table {
   thead {
     max-width: calc(100% - 15px);
@@ -147,14 +147,17 @@ table {
     tr {
       th,
       td {
-        width: 15rem;
+        @apply w-40 md:w-60;
         &:nth-child(1) {
-          width: 35%;
+          @apply w-1/4 md:w-1/3;
           flex-grow: 1;
         }
         &:last-child() {
-          width: 10%;
+          @apply w-36;
         }
+      }
+      th {
+        background-color: rgb(194 194 194 / 26%);
       }
     }
   }

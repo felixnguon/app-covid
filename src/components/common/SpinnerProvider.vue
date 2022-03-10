@@ -55,6 +55,7 @@ export default {
 <style>
 .spinner {
   background: rgba(255, 255, 255, 0.7) !important;
+  z-index: 99999 !important;
 }
 .orbit-spinner,
 .orbit-spinner * {

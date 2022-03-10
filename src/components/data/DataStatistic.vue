@@ -1,6 +1,6 @@
 <template>
   <div class="md:w-1/3 rounded-lg shadow-sm mb-4 px-2">
-    <div class="rounded-lg bg-white shadow-lg md:shadow-xl relative overflow-hidden">
+    <div class="rounded-lg bg-white shadow-lg md:shadow-xl relative overflow-hidden h-full">
       <div class="px-3 pt-8 pb-10 text-center relative z-10">
         <div>
           <Heading heading="h4" class="text-sm uppercase text-gray-500 leading-tight">{{ slugs[0] }}</Heading>
@@ -8,8 +8,8 @@
             data[slugs[0]]
           }}</Heading>
         </div>
-
-        <p class="text-xs text-green-500 leading-tight">▲ {{ percentage }} %</p>
+        <p class="text-xs leading-tight" style="color: rgb(237 87 119)">▲ {{ percentage }} %</p>
+        <PieChart :labels="slugs" :datasets="[{ data: slugs.map(item => data[item]) }]" />
       </div>
       <div class="absolute bottom-0 inset-x-0">
         <canvas id="chart1" height="70"></canvas>
@@ -20,12 +20,10 @@
 
 <script>
 import Heading from '../base/Heading.vue'
+import PieChart from './charts/PieChart.vue'
 
 export default {
-  components: { Heading },
-  data() {
-    return {}
-  },
+  components: { Heading, PieChart },
   emits: ['on-selected'],
   props: {
     slugs: {
@@ -33,8 +31,8 @@ export default {
       default: []
     },
     data: {
-      type: Array,
-      default: []
+      type: Object,
+      default: {}
     }
   },
   methods: {

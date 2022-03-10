@@ -19,11 +19,14 @@ const AppEnum = Object.freeze({
     }
   ],
   TABLE: ['Country', 'TOTAL CONFIRMED', 'TOTAL DEATHS', 'TOTAL RECOVERED', 'DATE'],
-  GLOBAL: [
-    ['NewConfirmed', 'TotalConfirmed'],
-    ['NewDeaths', 'TotalDeaths'],
-    ['NewRecovered', 'TotalRecovered']
-  ]
+  GLOBAL: {
+    title: 'Global',
+    data: [
+      ['NewConfirmed', 'TotalConfirmed'],
+      ['NewDeaths', 'TotalDeaths'],
+      ['NewRecovered', 'TotalRecovered']
+    ]
+  }
 })
 
 export default AppEnum

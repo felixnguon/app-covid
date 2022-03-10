@@ -6,7 +6,7 @@
     class="flex overflow-y-auto overflow-x-hidden fixed right-0 left-0 top-4 z-50 justify-center items-center h-modal md:h-full md:inset-0 shadow-md rounded-lg"
     v-if="country && isModalVisible"
   >
-    <div class="relative px-4 w-full max-w-2xl h-full md:h-auto mx-auto">
+    <div class="relative px-4 w-full max-w-4xl h-full md:h-auto mx-auto">
       <!-- Modal content -->
       <div class="relative bg-white rounded-lg shadow">
         <!-- Modal header -->
@@ -35,6 +35,12 @@
             <li class="text-base leading-relaxed text-gray-700">Region: {{ country.region }}</li>
             <li class="text-base leading-relaxed text-gray-700">Subregion: {{ country.subregion }}</li>
           </ul>
+          <hr />
+          <DatePicker @on-select-date="onSelectDate" :value="new Date()" />
+          <LineChart v-if="chartData[0].data.length > 0" :labels="chartLabels" :datasets="chartData" />
+          <div v-else>
+            <Heading heading="h2" class="uppercase text-center text-xl md:text-3xl mb-10">Coming soon</Heading>
+          </div>
         </div>
         <div class="p-6 space-y-6"></div>
         <!-- Modal footer -->
@@ -53,20 +59,69 @@
 </template>
 
 <script>
+import moment from 'moment'
+import { fetchCasesByStatusAndAfterDate } from '../../api/covidApi'
+import DatePicker from '../base/DatePicker.vue'
+import Heading from '../base/Heading.vue'
+import LineChart from './charts/LineChart.vue'
+import { useSpinner } from '../common/SpinnerProvider.vue'
+
 export default {
   emits: ['on-close'],
+  components: { DatePicker, Heading, LineChart },
+  data() {
+    return {
+      chartLabels: [],
+      chartData: []
+    }
+  },
+  setup() {
+    const { setSpinnerOn, setSpinnerOff } = useSpinner()
 
+    return {
+      setSpinnerOn,
+      setSpinnerOff
+    }
+  },
   props: {
     modal: {
       type: Object,
       default: {
         isVisible: false
       }
+    },
+    summary: {
+      type: Array,
+      default: []
     }
   },
   methods: {
+    fetchCasesByStatusAndAfterDate(date) {
+      fetchCasesByStatusAndAfterDate(this.modal.selected.Slug, date).then(data => {
+        const getUnique = [...new Set(data.map(item => item.Date))]
+        const chartData = getUnique.map(item => {
+          const findData = data
+            .slice()
+            .reverse()
+            .find(object => object.Date === item)
+          return findData
+        })
+        this.chartLabels = chartData.map(item => moment(item.Date).format('MMMM Do YYYY'))
+        const array = ['Confirmed', 'Deaths', 'Recovered']
+        this.chartData = []
+        array.forEach(item => {
+          const data = chartData.map(obj => obj[item])
+          this.chartData.push({ label: item, data })
+        })
+        this.setSpinnerOff()
+      })
+    },
     close() {
       this.$emit('on-close', false)
+    },
+    onSelectDate(selectDate) {
+      this.setSpinnerOn()
+      this.fetchCasesByStatusAndAfterDate(moment(selectDate).format())
     }
   },
   computed: {
@@ -76,6 +131,9 @@ export default {
     country() {
       return this.modal.selected
     }
+  },
+  created() {
+    this.onSelectDate(new Date())
   }
 }
 </script>
