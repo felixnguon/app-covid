@@ -1,17 +1,16 @@
 import { createApp } from 'vue'
 import App from './App.vue'
+import FontAwesomeIcon from './plugins/fontawesome-icons'
+import Toast from './plugins/toastification'
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+import store from './store'
 import router from './router'
 
 import './styles/tailwind.css'
 
-library.add(faUserSecret)
-
 const app = createApp(App)
 app.component('font-awesome-icon', FontAwesomeIcon)
+app.use(Toast)
+app.use(store)
 app.use(router)
 app.mount('#app')

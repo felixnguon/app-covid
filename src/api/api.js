@@ -23,7 +23,6 @@ request.interceptors.response.use(
     if (res.request.responseType === 'blob') {
       return res
     }
-    console.log('res.data.data', res.data.data)
     return res.data
   },
   function (err) {

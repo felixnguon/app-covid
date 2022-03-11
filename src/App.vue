@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
+  <main>
     <SpinnerProvider>
       <div id="nav"></div>
-      <router-view />
+      <div id="content"><router-view /></div>
     </SpinnerProvider>
-  </div>
+  </main>
 </template>
 <script>
 import SpinnerProvider from './components/common/SpinnerProvider.vue'
