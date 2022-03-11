@@ -36,21 +36,35 @@
             <li class="text-base leading-relaxed text-gray-700">Subregion: {{ country.subregion }}</li>
           </ul>
           <hr />
-          <DatePicker @on-select-date="onSelectDate" :value="new Date()" />
-          <LineChart v-if="chartData[0].data.length > 0" :labels="chartLabels" :datasets="chartData" />
+          <DatePicker @on-select-date="onSelectDate" :value="currDate" />
+          <LineChart
+            v-if="chartData.length > 0 && chartData[0].data.length > 0"
+            :labels="chartLabels"
+            :datasets="chartData"
+          />
           <div v-else>
-            <Heading heading="h2" class="uppercase text-center text-xl md:text-3xl mb-10">Coming soon</Heading>
+            <Heading heading="h2" class="text-center text-xl md:text-3xl mb-10">Select a date to view data</Heading>
           </div>
         </div>
         <div class="p-6 space-y-6"></div>
         <!-- Modal footer -->
-        <div class="flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600">
+        <div class="flex items-center p-6 rounded-b border-t border-gray-200 dark:border-gray-600">
           <button
             type="button"
             class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             @click.prevent="close"
           >
             Close
+          </button>
+          <button
+            type="button"
+            :class="[
+              `text-blue-700 text-yellow-300 hover:text-lime-500 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:focus:ring-blue-800 ml-auto`,
+              `${isAddable ? ' text-yellow-300' : ' text-zinc-600 opacity-75 '}`
+            ]"
+            @click.prevent="isAddable ? addBookmark(country.Slug) : removeBookmark(country.Slug)"
+          >
+            <font-awesome-icon :icon="['fas', 'star']" style="color: inherit" class="h-10" />
           </button>
         </div>
       </div>
@@ -67,10 +81,11 @@ import LineChart from './charts/LineChart.vue'
 import { useSpinner } from '../common/SpinnerProvider.vue'
 
 export default {
-  emits: ['on-close'],
+  emits: ['on-close', 'on-add-bookmark', 'on-remove-bookmark'],
   components: { DatePicker, Heading, LineChart },
   data() {
     return {
+      currDate: this.getDateXDaysAgo(5),
       chartLabels: [],
       chartData: []
     }
@@ -93,10 +108,14 @@ export default {
     summary: {
       type: Array,
       default: []
+    },
+    bookmarks: {
+      type: Array,
+      default: []
     }
   },
   methods: {
-    fetchCasesByStatusAndAfterDate(date) {
+    getCasesByStatusAndAfterDate(date) {
       fetchCasesByStatusAndAfterDate(this.modal.selected.Slug, date).then(data => {
         const getUnique = [...new Set(data.map(item => item.Date))]
         const chartData = getUnique.map(item => {
@@ -121,7 +140,19 @@ export default {
     },
     onSelectDate(selectDate) {
       this.setSpinnerOn()
-      this.fetchCasesByStatusAndAfterDate(moment(selectDate).format())
+      this.currDate = moment(selectDate).format()
+      this.getCasesByStatusAndAfterDate(moment(selectDate).format())
+    },
+    addBookmark(slug) {
+      this.$emit('on-add-bookmark', slug)
+    },
+    removeBookmark(slug) {
+      this.$emit('on-remove-bookmark', slug)
+    },
+    getDateXDaysAgo(numOfDays, date = new Date()) {
+      const daysAgo = new Date(date.getTime())
+      daysAgo.setDate(date.getDate() - numOfDays)
+      return daysAgo
     }
   },
   computed: {
@@ -130,10 +161,18 @@ export default {
     },
     country() {
       return this.modal.selected
+    },
+    isAddable() {
+      return this.bookmarks.length === 0 || !this.bookmarks.includes(this.country.Slug)
     }
   },
-  created() {
-    this.onSelectDate(new Date())
+  watch: {
+    isModalVisible: {
+      handler(value) {
+        if (value) this.onSelectDate(this.getDateXDaysAgo(5))
+      },
+      immediate: true
+    }
   }
 }
 </script>

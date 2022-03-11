@@ -1,13 +1,16 @@
 <template>
   <div class="home px-5 md:px-2 py-5">
-    <Heading heading="h1" elClass="text-3xl md:text-5xl text-center my-5 font-bold">{{ AppEnum.TITLE }}</Heading>
+    <header class="flex items-center justify-center relative">
+      <Heading heading="h1" elClass="text-3xl md:text-5xl text-center my-5 font-bold grow">{{ AppEnum.TITLE }}</Heading>
+      <BookmarkIcon :bookmarks="bookmarks" :data="countriesData" />
+    </header>
     <div>
       <Heading heading="h2" elClass="text-xl md:text-3xl text-center font-light">{{ AppEnum.DESCRIPTION }}</Heading>
       <DataTitle :data-date="date" />
       <Section>
         <Heading
           heading="h2"
-          class="text-xl md:text-3xl text-center font-semibold leading-tight md:mr-5 mb-2 md:mb-4"
+          elClass="text-xl md:text-3xl text-center font-semibold leading-tight md:mr-5 mb-2 md:mb-4"
           >{{ AppEnum.GLOBAL.title }}</Heading
         >
         <div class="md:flex items-center">
@@ -26,7 +29,13 @@
           @onSelectedModal="onSelectedModal"
         />
       </Section>
-      <DataModal :modal="modal" @onClose="onCloseModal" />
+      <DataModal
+        :modal="modal"
+        :bookmarks="bookmarks"
+        @onClose="onCloseModal"
+        @onAddBookmark="onAddBookmark"
+        @onRemoveBookmark="onRemoveBookmark"
+      />
     </div>
   </div>
 </template>
@@ -43,10 +52,12 @@ import DataTitle from '../components/data/DataTitle.vue'
 import DataTable from '../components/data/DataTable.vue'
 import DataModal from '../components/data/DataModal.vue'
 import DataStatistic from '../components/data/DataStatistic.vue'
-
+import BookmarkIcon from '../components/bookmark/BookmarkIcon.vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
 export default {
   name: 'Home',
-  components: { Heading, Section, DataTitle, DataTable, DataModal, DataStatistic },
+  components: { Heading, BookmarkIcon, Section, DataTitle, DataTable, DataModal, DataStatistic },
   data() {
     return {
       currentState: {},
@@ -106,7 +117,13 @@ export default {
   computed: {
     AppEnum() {
       return AppEnum
+    },
+    bookmarks() {
+      return this.$store.state.bookmark.bookmarks
     }
+  },
+  created() {
+    this.$store.commit('bookmark/FETCH_BOOKMARK')
   },
   methods: {
     onToggleModal() {
@@ -120,7 +137,22 @@ export default {
       if (countryInfo) {
         this.modal.isVisible = true
       }
+
       this.modal.selected = { ...countryInfo, ...country }
+    },
+    onAddBookmark(slug) {
+      this.$store.commit('bookmark/SET_BOOKMARK', slug)
+      const countryInfo = this.countriesData.find(item => item.Slug === slug)
+      toast.success(`${countryInfo.Country} bookmarked!`, {
+        timeout: 1000
+      })
+    },
+    onRemoveBookmark(slug) {
+      this.$store.commit('bookmark/REMOVE_BOOKMARK', slug)
+      const countryInfo = this.countriesData.find(item => item.Slug === slug)
+      toast.info(`${countryInfo.Country} unbookmarked!`, {
+        timeout: 1000
+      })
     }
   }
 }
